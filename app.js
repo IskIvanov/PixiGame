@@ -1,31 +1,8 @@
 const app = new PIXI.Application();
-
 document.getElementById("display").appendChild(app.view);
-// const renderer = PIXI.autoDetectRenderer(600,600, {
-//      transparent:true,
-//      resolution: 1
-// })
-// document.getElementById('display').appendChild(renderer.view);
 
 //Creating stage component
 const stage = new PIXI.Container();
-
-const Graphics = new PIXI.Graphics();
-
-let xVelocity = 0.1;
-let yVelocity = 0.1;
-let mousePosition;
-// Finding mouse position
-const getMousePosition = ()=> app.renderer.plugins.interaction.mouse.global;
-
-app.ticker.add( ()=>{
-     mousePosition = getMousePosition();
-     datDot.x = mousePosition.x;
-     datDot.y = mousePosition.y;
-     
-     console.log(getMousePosition());
-} );
-
 
 // Adding assets with loader
 PIXI.loader
@@ -38,6 +15,14 @@ PIXI.loader
 let rocket;
 let sniper;
 let explosion;
+let mousePosition;
+// Finding mouse position
+const getMousePosition = ()=> app.renderer.plugins.interaction.mouse.global;
+
+app.ticker.add( ()=>{
+     mousePosition = getMousePosition();
+     console.log(getMousePosition());
+} );
 
 console.log(getMousePosition());
 
@@ -48,8 +33,12 @@ function setup() {
      rocket = new PIXI.Sprite(
           PIXI.loader.resources['rocket'].texture
      )
+     sniper = new PIXI.Sprite(
+          PIXI.loader.resources['sniper'].texture
+     )
      
      rocket.interactive = true;
+     sniper.interactive = true;
      
      // rocket.anchor.set(0.5);
      // rocket.x = 100;
@@ -68,13 +57,18 @@ function animationLoop() {
      requestAnimationFrame(animationLoop);
 
      rocket.anchor.set(0.5);
+     
      rocket.x = 100;
      rocket.y = 100;
+
+     sniper.x = mousePosition.x;
+     sniper.y = mousePosition.y;
+
      rocket.anchor.set(0.5, 0.5);
 
      rocket.rotation+=0.05;
 
-     app.stage.addChild(rocket);
+     app.stage.addChild(rocket,sniper);
 }
 
 //  function player() {

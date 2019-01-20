@@ -1,40 +1,66 @@
-PIXI.utils.sayHello();
+const app = new PIXI.Application();
 
-const renderer = PIXI.autoDetectRenderer(600,600, {
-     transparent:true,
-     resolution: 1
-})
-document.getElementById('display').appendChild(renderer.view);
+document.getElementById("display").appendChild(app.view);
+// const renderer = PIXI.autoDetectRenderer(600,600, {
+//      transparent:true,
+//      resolution: 1
+// })
+// document.getElementById('display').appendChild(renderer.view);
 
+//Creating stage component
 const stage = new PIXI.Container();
 
+const Graphics = new PIXI.Graphics();
+
+let xVelocity = 0.1;
+let yVelocity = 0.1;
+let mousePosition;
+// Finding mouse position
+const getMousePosition = ()=> app.renderer.plugins.interaction.mouse.global;
+
+app.ticker.add( ()=>{
+     mousePosition = getMousePosition();
+     datDot.x = mousePosition.x;
+     datDot.y = mousePosition.y;
+     
+     console.log(getMousePosition());
+} );
+
+
+// Adding assets with loader
 PIXI.loader
      .add("rocket","./assets/rocketSlice.png")
      .add("sniper","./assets/sniperSlice.png")
      .add("explosion","./assets/explosion.png")
      .load(setup);
 
+// Naming variables for the main assets 
 let rocket;
 let sniper;
 let explosion;
-const getMousePosition = ()=> {
- console.log()    
-}
+
+console.log(getMousePosition());
+
 
 function setup() {
      stage.interactive = true;
+     
      rocket = new PIXI.Sprite(
           PIXI.loader.resources['rocket'].texture
      )
      
      rocket.interactive = true;
+     
+     // rocket.anchor.set(0.5);
+     // rocket.x = 100;
+     // rocket.y = 100;
+     // rocket.anchor.set(0.5, 0.5);
 
      rocket.click = () => {
           rocket.scale.x += 0.1;
           rocket.scale.y += 0.1;
      }
 
-     stage.addChild(rocket);
      animationLoop();
 }
 
@@ -48,7 +74,7 @@ function animationLoop() {
 
      rocket.rotation+=0.05;
 
-     renderer.render(stage);
+     app.stage.addChild(rocket);
 }
 
 //  function player() {

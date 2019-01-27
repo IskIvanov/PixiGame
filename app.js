@@ -1,107 +1,70 @@
-const app = new PIXI.Application();
-document.getElementById("display").appendChild(app.view);
+var renderer = PIXI.autoDetectRenderer(800, 600,{backgroundColor : 0x1099bb});  
+document.body.appendChild(renderer.view);
 
-//Creating stage component
-const stage = new PIXI.Container();
+var stage = new PIXI.Container();
 
-// Adding assets with loader
-PIXI.loader
-     .add("rocket","./assets/rocketSlice.png")
-     .add("sniper","./assets/sniperSlice.png")
-     .add("explosion","./assets/explosion.png")
-     .load(setup);
+var texture = PIXI.Texture.fromImage('./assets/sniperSlice.png');  
+var carrotTex = PIXI.Texture.fromImage('assets/rocket.png');
+var sniper = new PIXI.Sprite(texture);
+sniper.anchor.x = 0.5;  
+sniper.anchor.y = 0.5;
 
-// Naming variables for the main assets 
-let rocket;
-let sniper;
-let explosion;
-let mousePosition;
-// Finding mouse position
-const getMousePosition = ()=> app.renderer.plugins.interaction.mouse.global;
+sniper.position.x = 200;  
+sniper.position.y = 150;
 
-app.ticker.add( ()=>{
-     mousePosition = getMousePosition();
-     console.log(getMousePosition());
-} );
+var background = new PIXI.Graphics();  
+background.beginFill(0x123456);  
+background.drawRect(0,0,800,600);  
+background.endFill();  
 
-console.log(getMousePosition());
+stage.addChild(background);
 
+stage.addChild(sniper);
 
-function setup() {
-     stage.interactive = true;
-     
-     rocket = new PIXI.Sprite(
-          PIXI.loader.resources['rocket'].texture
-     )
-     sniper = new PIXI.Sprite(
-          PIXI.loader.resources['sniper'].texture
-     )
-     
-     rocket.interactive = true;
-     sniper.interactive = true;
-     
-     // rocket.anchor.set(0.5);
-     // rocket.x = 100;
-     // rocket.y = 100;
-     // rocket.anchor.set(0.5, 0.5);
+stage.interactive = true;
 
-     rocket.click = () => {
-          rocket.scale.x += 0.1;
-          rocket.scale.y += 0.1;
-     }
+stage.on("mousedown", function(e){  
+  shoot(sniper.rotation, {
+    x: sniper.position.x+Math.cos(sniper.rotation)*20,
+    y: sniper.position.y+Math.sin(sniper.rotation)*20
+  });
+})
 
-     animationLoop();
+var bullets = [];  
+var bulletSpeed = 10;
+
+// function setup() {
+//      animate();  
+// }
+
+// setup();
+
+function shoot(rotation, startPosition){  
+  var bullet = new PIXI.Sprite(carrotTex);
+  bullet.position.x = startPosition.x;
+  bullet.position.y = startPosition.y;
+  bullet.rotation = rotation;
+  stage.addChild(bullet);
+  bullets.push(bullet);
 }
 
-function animationLoop() {
-     requestAnimationFrame(animationLoop);
-
-     rocket.anchor.set(0.5);
-     
-     rocket.x = 100;
-     rocket.y = 100;
-
-     sniper.x = mousePosition.x;
-     sniper.y = mousePosition.y;
-
-     rocket.anchor.set(0.5, 0.5);
-
-     rocket.rotation+=0.05;
-
-     app.stage.addChild(rocket,sniper);
+function rotateToPoint(mx, my, px, py){  
+  var self = this;
+  var dist_Y = my - py;
+  var dist_X = mx - px;
+  var angle = Math.atan2(dist_Y,dist_X);
+  return angle;
 }
 
-//  function player() {
-//      requestAnimationFrame(player);
+function animate() {  
+  
+requestAnimationFrame(animate);
+sniper.rotation = rotateToPoint(renderer.plugins.interaction.mouse.global.x, renderer.plugins.interaction.mouse.global.y, sniper.position.x, sniper.position.y);
 
-//      sniper.anchor.set(0.5);
-//      sniper.x = app.screen.width / 2;
-//      sniper.y = app.screen.height / 2;
-//      sniper.rotation += 0.025;
-//      sniper.pivot.set(200,0);
-//      app.stage.addChild(sniper);
-// }
+for(var b=bullets.length-1; b>=0; b--){
+    bullets[b].position.x += Math.cos(bullets[b].rotation)*bulletSpeed;
+    bullets[b].position.y += Math.sin(bullets[b].rotation)*bulletSpeed;
+  }
 
-// function rocketShoot() {
-//      rocket.anchor.set(0.5);
-//      rocket.x = 100;
-//      rocket.y = 100;
-//      app.stage.addChild(rocket);
-// }
-
-// function fire() {
-//      explosion.anchor.set(0.5);
-//      explosion.scale.set(0.2);
-//      explosion.x = 295;
-//      explosion.y = 329;
-//      app.stage.addChild(explosion);
-// }
-
-// player();
-// rocketShoot();
-// fire(); 
-
-//  app.ticker.add(function (delta) {
-//      sniper.rotation += 0.03 * delta;
-//  })
-
+  renderer.render(stage);
+}

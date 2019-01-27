@@ -1,18 +1,18 @@
-var renderer = PIXI.autoDetectRenderer(800, 600,{backgroundColor : 0x1099bb});  
+const renderer = PIXI.autoDetectRenderer(800, 600,{backgroundColor : 0x1099bb});  
 document.body.appendChild(renderer.view);
 
-var stage = new PIXI.Container();
+const stage = new PIXI.Container();
 
-var texture = PIXI.Texture.fromImage('./assets/sniperSlice.png');  
-var carrotTex = PIXI.Texture.fromImage('assets/rocket.png');
-var sniper = new PIXI.Sprite(texture);
+const texture = PIXI.Texture.fromImage('./assets/sniperSlice.png');  
+const carrotTex = PIXI.Texture.fromImage('assets/rocket.png');
+const sniper = new PIXI.Sprite(texture);
 sniper.anchor.x = 0.5;  
 sniper.anchor.y = 0.5;
 
 sniper.position.x = 200;  
 sniper.position.y = 150;
 
-var background = new PIXI.Graphics();  
+const background = new PIXI.Graphics();  
 background.beginFill(0x123456);  
 background.drawRect(0,0,800,600);  
 background.endFill();  
@@ -30,14 +30,24 @@ stage.on("mousedown", function(e){
   });
 })
 
-var bullets = [];  
-var bulletSpeed = 10;
+stage.on("rightclick", function(e){
+     console.log('RightClick registed');
+})
 
-// function setup() {
-//      animate();  
-// }
+let bullets = [];  
+const bulletSpeed = 10;
 
-// setup();
+// Mouse position coordinates
+const getMousePosition = ()=> app.renderer.plugins.interaction.mouse.global;
+
+(function setup() {
+     animate();  
+})();
+
+function moveToPoint() {
+     sniper.position.x = getMousePosition.x;
+     sniper.position.y = getMousePosition.y;
+}
 
 function shoot(rotation, startPosition){  
   var bullet = new PIXI.Sprite(carrotTex);
@@ -56,15 +66,16 @@ function rotateToPoint(mx, my, px, py){
   return angle;
 }
 
+
 function animate() {  
-  
 requestAnimationFrame(animate);
 sniper.rotation = rotateToPoint(renderer.plugins.interaction.mouse.global.x, renderer.plugins.interaction.mouse.global.y, sniper.position.x, sniper.position.y);
 
-for(var b=bullets.length-1; b>=0; b--){
-    bullets[b].position.x += Math.cos(bullets[b].rotation)*bulletSpeed;
+for (var b=bullets.length-1; b>=0; b--){
+    bullets[b].positiofn.x += Math.cos(bullets[b].rotation)*bulletSpeed;
     bullets[b].position.y += Math.sin(bullets[b].rotation)*bulletSpeed;
-  }
+}
+
 
   renderer.render(stage);
 }

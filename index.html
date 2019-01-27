@@ -8,6 +8,20 @@
     <title>Shooting Game</title>
     <link rel="stylesheet" href="./css/style.css">
     <script src="./js/pixi.js"></script>
+    
+    <!-- Disabling context menu on rigth click -->
+    <script type="text/javascript">
+        if (document.addEventListener) {
+            document.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+            }, false);
+        } else {
+            document.attachEvent('oncontextmenu', function () {
+                window.event.returnValue = false;
+            });
+        }
+    </script>
+    <!-- ---- -->
 
 </head>
 

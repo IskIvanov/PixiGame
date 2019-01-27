@@ -1,5 +1,10 @@
-const renderer = PIXI.autoDetectRenderer(800, 600,{backgroundColor : 0x1099bb});  
+//Creating and centering rendered
+const renderer = PIXI.autoDetectRenderer(800, 600);  
 document.body.appendChild(renderer.view);
+renderer.view.style.position = 'absolute';
+renderer.view.style.top = '50%';
+renderer.view.style.left = '50%';
+renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
 
 const stage = new PIXI.Container();
 
@@ -13,7 +18,7 @@ sniper.position.x = 200;
 sniper.position.y = 150;
 
 const background = new PIXI.Graphics();  
-background.beginFill(0x123456);  
+background.beginFill(0x11111);  
 background.drawRect(0,0,800,600);  
 background.endFill();  
 
@@ -31,22 +36,23 @@ stage.on("mousedown", function(e){
 })
 
 stage.on("rightclick", function(e){
-     console.log('RightClick registed');
+     moveToPoint();
 })
 
 let bullets = [];  
 const bulletSpeed = 10;
 
-// Mouse position coordinates
-const getMousePosition = ()=> app.renderer.plugins.interaction.mouse.global;
+const getMousePosition = () => {
+      renderer.plugins.interaction.mouse.global;
+}
 
 (function setup() {
      animate();  
 })();
 
 function moveToPoint() {
-     sniper.position.x = getMousePosition.x;
-     sniper.position.y = getMousePosition.y;
+     sniper.position.x = renderer.plugins.interaction.mouse.global.x;
+     sniper.position.y = renderer.plugins.interaction.mouse.global.y;
 }
 
 function shoot(rotation, startPosition){  
@@ -72,10 +78,9 @@ requestAnimationFrame(animate);
 sniper.rotation = rotateToPoint(renderer.plugins.interaction.mouse.global.x, renderer.plugins.interaction.mouse.global.y, sniper.position.x, sniper.position.y);
 
 for (var b=bullets.length-1; b>=0; b--){
-    bullets[b].positiofn.x += Math.cos(bullets[b].rotation)*bulletSpeed;
+    bullets[b].position.x += Math.cos(bullets[b].rotation)*bulletSpeed;
     bullets[b].position.y += Math.sin(bullets[b].rotation)*bulletSpeed;
 }
-
 
   renderer.render(stage);
 }
